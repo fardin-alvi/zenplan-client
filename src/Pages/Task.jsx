@@ -17,40 +17,47 @@ const ItemTypes = {
 const Task = () => {
     const [newTask, setNewTask] = useState({ title: '', description: '', category: 'Todo' });
     const [editTask, setEditTask] = useState(null);
-    const [openEditModal, setOpenEditModal] = useState(false); 
+    const [openEditModal, setOpenEditModal] = useState(false);
     const { user } = useContext(Authcontext);
     const queryClient = useQueryClient();
 
     // Fetch tasks
     const { data: tasks = [], refetch } = useQuery({
-        queryKey: ['tasks'],
+        queryKey: ['tasks', user?.email],
         queryFn: async () => {
-            const res = await axios.get('http://localhost:5000/tasks');
+            const res = await axios.get(`https://zenplan-server.vercel.app/tasks?userEmail=${user.email}`);
             return res.data;
         },
+        enabled: !!user?.email,
     });
 
     // Handle task update
     const handleUpdateTask = async (updatedTask) => {
-        await axios.patch(`http://localhost:5000/tasks/${updatedTask._id}`, updatedTask);
+        await axios.patch(`https://zenplan-server.vercel.app/tasks/${updatedTask._id}`, updatedTask);
         queryClient.invalidateQueries(['tasks']);
-        setOpenEditModal(false); 
+        setOpenEditModal(false);
     };
 
     // Handle task add
     const handleCreateTask = async () => {
-        const res = await axios.post('http://localhost:5000/tasks', {
+        if (!user?.email) {
+            toast.error("User not logged in");
+            return;
+        }
+
+        const res = await axios.post("https://zenplan-server.vercel.app/tasks", {
             ...newTask,
-            user: user.uid,
+            userEmail: user.email,
         });
-        toast.success('Task Added Successfully');
+
+        toast.success("Task Added Successfully");
         refetch();
-        setNewTask({ title: '', description: '', category: 'Todo' });
+        setNewTask({ title: "", description: "", category: "Todo" });
     };
 
     // Handle task delete
     const handleDeleteTask = async (taskId) => {
-        await axios.delete(`http://localhost:5000/tasks/${taskId}`);
+        await axios.delete(`https://zenplan-server.vercel.app/tasks/${taskId}`);
         toast.success('Deleted Task');
         refetch();
     };

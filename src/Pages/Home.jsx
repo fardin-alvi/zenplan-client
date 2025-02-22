@@ -29,7 +29,7 @@ const Home = () => {
                     uid: res.user.uid
                 };
 
-                axios.post('http://localhost:5000/users', userData, {
+                axios.post('https://zenplan-server.vercel.app/users', userData, {
                     headers: {
                         'Content-Type': 'application/json',
                     },
@@ -45,9 +45,9 @@ const Home = () => {
     };
 
     const handleLogout = () => {
-        logout() 
+        logout()
             .then(() => {
-                setUser(null); 
+                setUser(null);
                 setIsLoggedIn(false);
                 setError('');
             })
