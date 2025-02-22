@@ -79,11 +79,5 @@ npm run dev
 
 The app should now be running at **http://localhost:5173** 🚀
 
-## 💡 Future Enhancements
-- User authentication and role-based access
-- Task due dates and notifications
-- Customizable categories
 
-## 📜 License
-This project is **open-source** and available under the **MIT License**.
 
