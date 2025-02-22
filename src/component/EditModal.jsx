@@ -12,8 +12,8 @@ const EditModal = ({ open, task, onClose, onSave }) => {
     }, [task]);
 
     const handleSave = async () => {
-        await onSave(formData); // Call the onSave function passed from the parent
-        onClose(); // Close the dialog
+        await onSave(formData); 
+        onClose();
     };
 
     return (

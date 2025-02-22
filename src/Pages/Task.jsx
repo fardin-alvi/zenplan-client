@@ -5,6 +5,8 @@ import { TextField, Button } from '@mui/material';
 import { Authcontext } from '../provider/AuthProvider';
 import { useDrag, useDrop } from 'react-dnd';
 import toast from 'react-hot-toast';
+import EditModal from '../component/EditModal';
+import moment from 'moment'
 
 const categories = ['Todo', 'In Progress', 'Done'];
 
@@ -15,6 +17,7 @@ const ItemTypes = {
 const Task = () => {
     const [newTask, setNewTask] = useState({ title: '', description: '', category: 'Todo' });
     const [editTask, setEditTask] = useState(null);
+    const [openEditModal, setOpenEditModal] = useState(false); 
     const { user } = useContext(Authcontext);
     const queryClient = useQueryClient();
 
@@ -31,6 +34,7 @@ const Task = () => {
     const handleUpdateTask = async (updatedTask) => {
         await axios.patch(`http://localhost:5000/tasks/${updatedTask._id}`, updatedTask);
         queryClient.invalidateQueries(['tasks']);
+        setOpenEditModal(false); 
     };
 
     // Handle task add
@@ -39,16 +43,16 @@ const Task = () => {
             ...newTask,
             user: user.uid,
         });
-        toast.success('Task Added Succesfully')
-        refetch()
+        toast.success('Task Added Successfully');
+        refetch();
         setNewTask({ title: '', description: '', category: 'Todo' });
     };
 
     // Handle task delete
     const handleDeleteTask = async (taskId) => {
         await axios.delete(`http://localhost:5000/tasks/${taskId}`);
-        toast.success('Deleted Task')
-        refetch()
+        toast.success('Deleted Task');
+        refetch();
     };
 
     const DragItem = ({ task, index }) => {
@@ -61,8 +65,13 @@ const Task = () => {
             <div ref={dragRef} className="p-2 mb-2 bg-base-200 rounded shadow">
                 <h4 className="font-bold">{task.title}</h4>
                 <p className="text-white">{task.description}</p>
+                <p className="text-gray-300 text-sm">
+                    {moment(task.createdAt).format("MMMM Do YYYY, h:mm a")}
+                </p>
                 <div className="flex justify-between mt-2">
-                    <Button onClick={() => setEditTask(task)}>Edit</Button>
+                    <Button onClick={() => { setEditTask(task); setOpenEditModal(true); }}>
+                        Edit
+                    </Button>
                     <Button color="error" onClick={() => handleDeleteTask(task._id)}>Delete</Button>
                 </div>
             </div>
@@ -108,6 +117,7 @@ const Task = () => {
 
     return (
         <div className="p-4">
+            {/* Add Task Form */}
             <form onSubmit={handleSubmit} className="mb-8 p-4 flex bg-blue-50 gap-x-3 items-center rounded">
                 <TextField
                     label="Title"
@@ -129,11 +139,21 @@ const Task = () => {
                 />
                 <Button type="submit" variant="contained" color="primary">Add Task</Button>
             </form>
-            <div className="flex gap-4">
+
+            {/* Task Columns */}
+            <div className="flex flex-col md:flex-row gap-4">
                 {categories.map(category => (
                     <DropZone key={category} category={category} tasks={tasks} />
                 ))}
             </div>
+
+            {/* Edit Modal */}
+            <EditModal
+                open={openEditModal}
+                task={editTask}
+                onClose={() => setOpenEditModal(false)}
+                onSave={handleUpdateTask}
+            />
         </div>
     );
 };
