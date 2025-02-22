@@ -3,7 +3,7 @@
 ZenPlano is a real-time task management system with drag-and-drop functionality. Users can add, update, and manage tasks in different categories. The system supports real-time updates via **Socket.io** and filters tasks based on the logged-in user.
 
 ## 🚀 Live Demo
-[Live Application](#) (Add your deployed link here)
+https://taskzen-1492d.web.app
 
 ## 📌 Features
 - User authentication (Only see your own tasks)
@@ -50,7 +50,7 @@ Make sure you have **Node.js** and **MongoDB** installed before proceeding.
 
 ### 1️⃣ Clone the Repository
 ```sh
-git clone https://github.com/yourusername/zenplano.git
+git clone https://github.com/fardin-alvi/zenplano.git
 cd zenplano
 ```
 
